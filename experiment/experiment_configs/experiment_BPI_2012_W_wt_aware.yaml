@@ -1,0 +1,86 @@
+###########################################
+
+experiment_name: BPI_2012_W_worktime_minmax_tax
+seed: 42
+load:
+  path: ../data/BPI_2012_W.xes
+  case_id_col: case:concept:name
+  activity_col: concept:name
+  timestamp_col: time:timestamp
+split:
+  type: temporal
+  params:
+    test_ratio: 0.2
+    val_ratio: 0.0
+worktime_identification:
+  bucket_len: 3600
+  period_len: week
+  threshold: 0.2
+  threshold_ref: perc90
+  week_anchor: MON
+
+worktime_mapping: 
+  worktime_anchor: 1970-01-01T00:00:00Z
+  worktime_col: worktime:timestamp
+
+prefix:
+  min_prefix_len: 2
+  max_prefix_len: null
+
+features:
+- feature_key: raw
+  params:
+    source_col_name: concept:name
+    encoding: onehot
+    feature_name: activity_onehot
+
+- feature_key: time_since_last_event
+  params:
+    time_col: worktime:timestamp
+    case_id_col: case:concept:name
+    encoding: numeric
+    unit: seconds
+    normalization: ["minmax"]
+    feature_name: time_since_last_event_num_sec_wt
+- feature_key: worktime_in_day
+  params:
+    worktime_col: worktime:timestamp
+    case_id_col: case:concept:name
+    encoding: numeric
+    unit: seconds
+    normalization: ["minmax"]
+    feature_name: worktime_in_day_num_sec_wt
+- feature_key: worktime_in_week
+  params:
+    worktime_col: worktime:timestamp
+    case_id_col: case:concept:name
+    encoding: numeric
+    unit: seconds
+    normalization: ["minmax"]
+    feature_name: worktime_in_week_num_sec_wt
+
+target:
+  target: time_until_next_event
+  time: worktime
+  normalization: ["minmax"]
+
+transformer:
+  transformer_key: lstm 
+  params:
+    pad_value: -1.0
+
+model:
+  type: lstm
+  params:
+    num_layers: 2
+    hidden_size: 64
+    lr: 1e-3
+    dropout: 0.2
+    batch_size: 32
+    epochs: 100
+    loss: mae
+    verbose: 1
+    pad_value: -1.0
+output: 
+  path: artifacts/experiments/BPI_2012_W
+  name: BPI_2012_W_worktime_minmax_tax

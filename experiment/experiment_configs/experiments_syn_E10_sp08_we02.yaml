@@ -1,0 +1,232 @@
+experiments:
+
+###########################################
+- experiment_name: syn_E10_sp08_we02_worktime_minmax_tsl
+  seed: 42
+  load:
+    path: data/syn/syn_E10_sp08_we02.xes
+    case_id_col: case:concept:name
+    activity_col: concept:name
+    timestamp_col: time:timestamp
+  split:
+    type: temporal
+    params:
+      test_ratio: 0.2
+      val_ratio: 0.0
+  worktime_identification:
+    bucket_len: 3600
+    period_len: week
+    threshold: 0.2
+    threshold_ref: perc90
+    week_anchor: MON
+
+  worktime_mapping: 
+    worktime_anchor: 1970-01-01T00:00:00Z
+    worktime_col: worktime:timestamp
+
+  prefix:
+    min_prefix_len: 2
+    max_prefix_len: null
+
+  features:
+  - feature_key: raw
+    params:
+      source_col_name: concept:name
+      encoding: onehot
+      feature_name: activity_onehot
+
+  - feature_key: time_since_last_event
+    params:
+      time_col: worktime:timestamp
+      case_id_col: case:concept:name
+      encoding: numeric
+      unit: seconds
+      normalization: ["minmax"]
+      feature_name: time_since_last_event_num_sec_wt
+
+  target:
+    target: time_until_next_event
+    time: worktime
+    normalization: ["minmax"]
+
+  transformer:
+    transformer_key: lstm 
+    params:
+      pad_value: -1.0
+
+  model:
+    type: lstm
+    params:
+      num_layers: 2
+      hidden_size: 64
+      lr: 1e-3
+      dropout: 0.2
+      batch_size: 32
+      epochs: 100
+      loss: mae
+      verbose: 1
+      pad_value: -1.0
+  output: 
+    path: artifacts/experiments/syn_E10_sp08_we02
+    name: syn_E10_sp08_we02_worktime_minmax_tsl
+
+
+###########################################
+- experiment_name: syn_E10_sp08_we02_clocktime_minmax_tsl
+  seed: 42
+  load:
+    path: data/syn/syn_E10_sp08_we02.xes
+    case_id_col: case:concept:name
+    activity_col: concept:name
+    timestamp_col: time:timestamp
+  split:
+    type: temporal
+    params:
+      test_ratio: 0.2
+      val_ratio: 0.0
+  worktime_identification:
+    bucket_len: 3600
+    period_len: week
+    threshold: 0.2
+    threshold_ref: perc90
+    week_anchor: MON
+
+  worktime_mapping: 
+    worktime_anchor: 1970-01-01T00:00:00Z
+    worktime_col: worktime:timestamp
+
+  prefix:
+    min_prefix_len: 2
+    max_prefix_len: null
+
+  features:
+  - feature_key: raw
+    params:
+      source_col_name: concept:name
+      encoding: onehot
+      feature_name: activity_onehot
+
+  - feature_key: time_since_last_event
+    params:
+      time_col: time:timestamp
+      case_id_col: case:concept:name
+      encoding: numeric
+      unit: seconds
+      normalization: ["minmax"]
+      feature_name: time_since_last_event_num_sec_ct
+
+  target:
+    target: time_until_next_event
+    time: clocktime
+    normalization: ["minmax"]
+
+  transformer:
+    transformer_key: lstm 
+    params:
+      pad_value: -1.0
+
+  model:
+    type: lstm
+    params:
+      num_layers: 2
+      hidden_size: 64
+      lr: 1e-3
+      dropout: 0.2
+      batch_size: 32
+      epochs: 100
+      loss: mae
+      verbose: 1
+      pad_value: -1.0
+  output: 
+    path: artifacts/experiments/syn_E10_sp08_we02
+    name: syn_E10_sp08_we02_clocktime_minmax_tsl
+
+###########################################
+- experiment_name: syn_E10_sp08_we02_clocktime_minmax_tax
+  seed: 42
+  load:
+    path: data/syn/syn_E10_sp08_we02.xes
+    case_id_col: case:concept:name
+    activity_col: concept:name
+    timestamp_col: time:timestamp
+  split:
+    type: temporal
+    params:
+      test_ratio: 0.2
+      val_ratio: 0.0
+  worktime_identification:
+    bucket_len: 3600
+    period_len: week
+    threshold: 0.2
+    threshold_ref: perc90
+    week_anchor: MON
+
+  worktime_mapping: 
+    worktime_anchor: 1970-01-01T00:00:00Z
+    worktime_col: worktime:timestamp
+
+  prefix:
+    min_prefix_len: 2
+    max_prefix_len: null
+
+  features:
+  - feature_key: raw
+    params:
+      source_col_name: concept:name
+      encoding: onehot
+      feature_name: activity_onehot
+
+  - feature_key: time_since_last_event
+    params:
+      time_col: time:timestamp
+      case_id_col: case:concept:name
+      encoding: numeric
+      unit: seconds
+      normalization: ["minmax"]
+      feature_name: time_since_last_event_num_sec
+  - feature_key: time_in_week
+    params:
+      time_col: time:timestamp
+      case_id_col: case:concept:name
+      encoding: numeric
+      unit: seconds
+      normalization: ["minmax"]
+      feature_name: time_in_week_num_sec
+  - feature_key: time_in_day
+    params:
+      time_col: time:timestamp
+      case_id_col: case:concept:name
+      encoding: numeric
+      unit: seconds
+      normalization: ["minmax"]
+      feature_name: time_in_day_num_sec
+
+  target:
+    target: time_until_next_event
+    time: clocktime
+    normalization: ["minmax"]
+
+  transformer:
+    transformer_key: lstm 
+    params:
+      pad_value: -1.0
+
+  model:
+    type: lstm
+    params:
+      num_layers: 2
+      hidden_size: 64
+      lr: 1e-3
+      dropout: 0.2
+      batch_size: 32
+      epochs: 100
+      loss: mae
+      verbose: 1
+      pad_value: -1.0
+  output: 
+    path: artifacts/experiments/syn_E10_sp08_we02
+    name: syn_E10_sp08_we02_minmax_tax
+
+output: 
+  path: artifacts/experiment_batches
+  name: experiments_syn_E10_sp08_we02
