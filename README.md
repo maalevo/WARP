@@ -4,6 +4,7 @@ Authors anonymized
 This repository contains the implementation and experimental framework for the research paper "WARP: Worktime-Aware Representation of Time for Predictive Process Monitoring".
 
 ## Repository structure
+```text
 ├── data/               # Source for synthetic event logs
 ├── load/               # Utilities for initial event log ingestion
 ├── split/              # Utilities for partitioning event logs into training and testing subsets
